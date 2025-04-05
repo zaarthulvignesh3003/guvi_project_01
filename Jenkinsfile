@@ -1,27 +1,38 @@
-def branch = env.BRANCH_NAME
-
 pipeline {
     agent any
 
     environment {
-        IMAGE_NAME = branch == 'main' ? 'vignesh221193/guvi_project_01_prod' : 'vignesh221193/guvi_project_01_dev'
-        IMAGE_TAG = branch == 'main' ? 'prod' : 'dev'
+        REGISTRY = 'vignesh221193'
     }
 
     stages {
-        stage('Build Docker Image') {
+        stage('Set Image Details') {
             steps {
-                sh 'docker build -t $IMAGE_NAME:$IMAGE_TAG .'
+                script {
+                    def branch = env.GIT_BRANCH?.replaceFirst(/^origin\//, '')
+                    if (branch == 'main') {
+                        env.IMAGE_NAME = "${REGISTRY}/guvi_project_01_prod"
+                        env.IMAGE_TAG = 'prod'
+                    } else {
+                        env.IMAGE_NAME = "${REGISTRY}/guvi_project_01_dev"
+                        env.IMAGE_TAG = 'dev'
+                    }
+                }
             }
         }
 
-        stage('Push Docker Image') {
+        stage('Build Docker Image') {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'dockerhub-cred', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
-                    sh """
-                    echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
-                    docker push $IMAGE_NAME:$IMAGE_TAG
-                    """
+                echo "Image: ${env.IMAGE_NAME}:${env.IMAGE_TAG}"
+                sh "docker build -t ${env.IMAGE_NAME}:${env.IMAGE_TAG} ."
+            }
+        }
+
+        stage('Push to Docker Hub') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                    sh "echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin"
+                    sh "docker push ${env.IMAGE_NAME}:${env.IMAGE_TAG}"
                 }
             }
         }
