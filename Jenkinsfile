@@ -1,29 +1,26 @@
+def branch = env.BRANCH_NAME
+
 pipeline {
     agent any
 
     environment {
-        IMAGE_NAME = "guvi_project"
-        DOCKER_HUB_USER = "vignesh221193"
-        DOCKER_HUB_CRED = credentials('dockerhub-cred') // ID you create in Jenkins
+        IMAGE_NAME = branch == 'main' ? 'vignesh221193/guvi_project_01_prod' : 'vignesh221193/guvi_project_01_dev'
+        IMAGE_TAG = branch == 'main' ? 'prod' : 'dev'
     }
 
     stages {
         stage('Build Docker Image') {
             steps {
-                script {
-                    def tag = env.BRANCH_NAME == 'main' ? 'prod' : 'dev'
-                    sh "docker build -t $DOCKER_HUB_USER/${IMAGE_NAME}:${tag} ."
-                }
+                sh 'docker build -t $IMAGE_NAME:$IMAGE_TAG .'
             }
         }
 
-        stage('Push to Docker Hub') {
+        stage('Push Docker Image') {
             steps {
-                script {
-                    def tag = env.BRANCH_NAME == 'main' ? 'prod' : 'dev'
+                withCredentials([usernamePassword(credentialsId: 'dockerhub-cred', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
                     sh """
-                        echo $DOCKER_HUB_CRED_PSW | docker login -u $DOCKER_HUB_CRED_USR --password-stdin
-                        docker push $DOCKER_HUB_USER/${IMAGE_NAME}:${tag}
+                    echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+                    docker push $IMAGE_NAME:$IMAGE_TAG
                     """
                 }
             }
