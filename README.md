@@ -7,6 +7,7 @@ GitHub repo URL: https://github.com/zaarthulvignesh3003/guvi_project_01.git    (
 Deployed site URL : http://98.80.13.66/
 
 Docker images : vignesh221193/react-static-site tag:dev imageID: 8f14c4c103fa
+
                 vignesh221193/react-static-site tag:prod imageID: 8f14c4c103fa
 
 
