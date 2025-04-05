@@ -34,7 +34,7 @@ pipeline {
             steps {
                 // SSH into EC2 and run docker pull + docker run
                 sh '''
-                    ssh -o StrictHostKeyChecking=no ec2-user@<your-ec2-ip> '
+                    ssh -o StrictHostKeyChecking=no ec2-user@18.234.147.86 '
                         docker pull $DOCKER_HUB_USER/$IMAGE_NAME:latest &&
                         docker stop app || true &&
                         docker rm app || true &&
