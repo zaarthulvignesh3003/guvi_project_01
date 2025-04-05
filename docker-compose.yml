@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  react-static-app:
+    image: react-static-site
+    container_name: react-static-container
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:80"
+    restart: unless-stopped
