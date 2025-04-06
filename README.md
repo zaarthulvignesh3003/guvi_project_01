@@ -5,6 +5,7 @@ react-static-app
 GitHub repo URL: https://github.com/zaarthulvignesh3003/guvi_project_01.git    (check dev and main branches)
 
 Deployed site URL : http://98.80.13.66/
+Note: I stopped my EC2 instance otherwise AWS will charge me. Let me know when you want to check this - i will turn my instance on
 
 Docker images : vignesh221193/react-static-site tag:dev imageID: 8f14c4c103fa
 
@@ -20,6 +21,8 @@ Please see project_1.docx for the screenshots I uploaded for your reference
 ************************************************************************************************************
 
 Monitoring 
+
+Note: I stopped my EC2 instance otherwise AWS will charge me. Let me know when you want to check this - i will turn my instance on
 
 For Blackbox Exporter - for checking http status you can visit here http://13.218.91.245:9115/
 
